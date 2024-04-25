@@ -1,9 +1,16 @@
-import React from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import FetchData from './tests/fetch/fetchData';
+import Table from './tests/components/Table';
+import { Planet } from './types';
 
-function App() {
+function App(): React.ReactElement {
+  const [planets, setPlanets] = useState<Planet[]>([]);
+
   return (
-    <span>Hello, App!</span>
+    <div>
+      <FetchData setPlanetsData={ setPlanets } />
+      <Table planets={ planets } />
+    </div>
   );
 }
 
