@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import FetchData from './tests/fetch/fetchData';
-import Table from './tests/components/Table';
+import Table from './components/Table';
 import { Planet } from './types';
-import { FilterContext } from './context/FilterContext';
+import { FilterProvider } from './provider/FilterProvider';
 import FilterInput from './components/FilterInput';
 
 function App(): React.ReactElement {
   const [planets, setPlanets] = useState<Planet[]>([]);
-  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     const fetchPlanets = async () => {
@@ -26,10 +24,10 @@ function App(): React.ReactElement {
   }, []);
 
   return (
-    <FilterContext.Provider value={ { filter, setFilter } }>
+    <FilterProvider>
       <FilterInput />
       <Table planets={ planets } />
-    </FilterContext.Provider>
+    </FilterProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { FilterContext } from '../context/FilterContext';
 
 interface FilterProviderProps {

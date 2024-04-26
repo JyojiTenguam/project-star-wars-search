@@ -2,31 +2,26 @@ import React, { ChangeEvent, useContext, useState } from 'react';
 import { FilterContext } from '../context/FilterContext';
 
 function FilterInput() {
-  const [inputValue, setInputValue] = useState('');
-  const { setFilter } = useContext(FilterContext);
-
-  console.log(inputValue, 'Valor digitado no campo');
+  const { filter, setFilter } = useContext(FilterContext);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value, 'Valor atual do campo de entrada');
-    setInputValue(event.target.value);
+    setFilter(event.target.value);
   };
 
-  const handleButtonClick = () => {
-    console.log(inputValue, 'Valor de inputValue');
-    setFilter(inputValue);
+  const handleClearFilter = () => {
+    setFilter('');
   };
 
   return (
     <div>
       <input
-        type="text"
         data-testid="name-filter"
+        type="text"
         placeholder="Filter by name..."
-        value={ inputValue }
+        value={ filter }
         onChange={ handleInputChange }
       />
-      <button onClick={ handleButtonClick }>Filtrar</button>
+      <button onClick={ handleClearFilter }>Limpar filtro</button>
     </div>
   );
 }
