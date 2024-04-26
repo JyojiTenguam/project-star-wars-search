@@ -1,11 +1,22 @@
-import React from 'react';
+import { useContext } from 'react';
 import { Planet } from '../types';
+import { FilterContext } from '../context/FilterContext';
 
 interface TableProps {
   planets: Planet[];
 }
 
 function Table({ planets }: TableProps) {
+  console.log(planets, 'Planetas recebidos');
+
+  const { filter } = useContext(FilterContext);
+  console.log('Valor atual do filter:', filter);
+
+  const filteredPlanets = planets.filter((planet) => (
+    planet.name.toLowerCase().includes(filter.toLowerCase())
+  ));
+  console.log(filteredPlanets, 'Planetas filtrados');
+
   return (
     <table>
       <thead>
@@ -26,7 +37,7 @@ function Table({ planets }: TableProps) {
         </tr>
       </thead>
       <tbody>
-        {planets.map((planet: Planet) => (
+        {filteredPlanets.map((planet) => (
           <tr key={ planet.name }>
             <td>{planet.name}</td>
             <td>{planet.rotation_period}</td>
@@ -37,7 +48,7 @@ function Table({ planets }: TableProps) {
             <td>{planet.terrain}</td>
             <td>{planet.surface_water}</td>
             <td>{planet.population}</td>
-            <td>{planet.films.join(', ')}</td>
+            <td>{planet.films.length}</td>
             <td>{planet.created}</td>
             <td>{planet.edited}</td>
             <td>{planet.url}</td>
