@@ -3,9 +3,23 @@ import { FilterContext } from '../context/FilterContext';
 import { filteredPlanets } from '../hooks/userFilter';
 
 function Table() {
-  const { planets, filter } = useContext(FilterContext);
+  const { planets, filter,
+    filteredPlanets: handleFilterResults } = useContext(FilterContext);
 
   const filterName = filteredPlanets(planets, filter);
+
+  const applyFilters = () => {
+    let filtered = filterName;
+
+    // Aplica os outros filtros
+    if (handleFilterResults.length > 0) {
+      filtered = handleFilterResults;
+    }
+
+    return filtered;
+  };
+
+  const planetsToRender = applyFilters();
 
   return (
     <table>
@@ -27,7 +41,7 @@ function Table() {
         </tr>
       </thead>
       <tbody>
-        {filterName.map((planet) => (
+        {planetsToRender.map((planet) => (
           <tr key={ planet.name }>
             <td>{planet.name}</td>
             <td>{planet.rotation_period}</td>

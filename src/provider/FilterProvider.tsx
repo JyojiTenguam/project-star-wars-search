@@ -10,6 +10,7 @@ interface FilterProviderProps {
 export function FilterProvider({ children }: FilterProviderProps) {
   const [filter, setFilter] = useState('');
   const [planets, setPlanets] = useState<Planet[]>([]);
+  const [filteredPlanets, setFilteredPlanets] = useState<Planet[]>([]); // Adicione esta linha
 
   useEffect(() => {
     (async () => {
@@ -22,7 +23,14 @@ export function FilterProvider({ children }: FilterProviderProps) {
   }, []);
 
   return (
-    <FilterContext.Provider value={ { filter, setFilter, planets } }>
+    <FilterContext.Provider
+      value={ { filter,
+        setFilter,
+        planets,
+        filteredPlanets,
+        setFilteredPlanets } }
+    >
+      {' '}
       {children}
     </FilterContext.Provider>
   );
