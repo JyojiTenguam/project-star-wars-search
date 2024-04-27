@@ -1,6 +1,12 @@
 import React, { ChangeEvent, useContext, useState, useEffect } from 'react';
 import { FilterContext } from '../context/FilterContext';
 
+type FilterType = {
+  column: string;
+  comparison: string;
+  value: string;
+};
+
 function FilterInput() {
   const { filter, setFilter, planets, setFilteredPlanets } = useContext(FilterContext);
   const [filterValues, setFilterValues] = useState({
@@ -8,10 +14,43 @@ function FilterInput() {
     comparison: 'maior que',
     value: '0',
   });
+  const [activeFilters, setActiveFilters] = useState<FilterType[]>([]);
 
   useEffect(() => {
     console.log('filterValues após a atualização:', filterValues);
   }, [filterValues]);
+
+  useEffect(() => {
+    let filteredData = [...planets]; // começa com todos os planetas
+
+    // Adiciona a funcionalidade de filtrar pelo nome
+    if (filter) {
+      filteredData = filteredData.filter((planet: any) => planet.name.includes(filter));
+    }
+
+    activeFilters.forEach((activeFilter) => {
+      filteredData = filteredData.filter((planet: any) => {
+        const planetValue = Number(planet[activeFilter.column as keyof typeof planet]);
+        let comparisonResult = false;
+        switch (activeFilter.comparison) {
+          case 'maior que':
+            comparisonResult = planetValue > Number(activeFilter.value);
+            break;
+          case 'menor que':
+            comparisonResult = planetValue < Number(activeFilter.value);
+            break;
+          case 'igual a':
+            comparisonResult = planetValue === Number(activeFilter.value);
+            break;
+          default:
+            comparisonResult = true;
+        }
+        return comparisonResult;
+      });
+    });
+
+    setFilteredPlanets(filteredData);
+  }, [activeFilters, planets, filter, setFilteredPlanets]);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     console.log('handleInputChange foi chamada');
@@ -36,6 +75,7 @@ function FilterInput() {
       comparison: '',
       value: '',
     });
+    setFilteredPlanets(planets);
   };
 
   const handleFilter = () => {
@@ -48,6 +88,11 @@ function FilterInput() {
     }
 
     const filteredData = planets.filter((planet: any) => {
+      // Adiciona a funcionalidade de filtrar pelo nome
+      if (filterValues.column === 'name') {
+        return planet.name.includes(filter);
+      }
+
       const planetValue = Number(planet[filterValues.column as keyof typeof planet]);
       console.log('Valor do planeta para a coluna selecionada:', planetValue);
       let comparisonResult = false;
@@ -71,6 +116,13 @@ function FilterInput() {
     });
     console.log('Dados filtrados no final da função handleFilter:', filteredData);
     setFilteredPlanets(filteredData);
+    setActiveFilters([...activeFilters, filterValues]);
+  };
+
+  const handleRemoveFilter = (index: number) => {
+    const newActiveFilters = [...activeFilters];
+    newActiveFilters.splice(index, 1);
+    setActiveFilters(newActiveFilters);
   };
 
   return (
@@ -118,6 +170,18 @@ function FilterInput() {
       >
         Filtrar
       </button>
+      {activeFilters.map((activeFilter, index) => (
+        <div key={ index }>
+          <span>
+            {activeFilter.column}
+            {' '}
+            {activeFilter.comparison}
+            {' '}
+            {activeFilter.value}
+          </span>
+          <button onClick={ () => handleRemoveFilter(index) }>Remover</button>
+        </div>
+      ))}
     </div>
   );
 }
