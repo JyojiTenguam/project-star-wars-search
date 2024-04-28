@@ -21,35 +21,39 @@ function FilterInput() {
   }, [filterValues]);
 
   useEffect(() => {
-    let filteredData = [...planets]; // começa com todos os planetas
+    if (Array.isArray(planets)) {
+      let filteredData = [...planets]; // começa com todos os planetas
 
-    // Adiciona a funcionalidade de filtrar pelo nome
-    if (filter) {
-      filteredData = filteredData.filter((planet: any) => planet.name.includes(filter));
-    }
+      // Adiciona a funcionalidade de filtrar pelo nome
+      if (filter) {
+        filteredData = filteredData.filter((planet: any) => planet.name.includes(filter));
+      }
 
-    activeFilters.forEach((activeFilter) => {
-      filteredData = filteredData.filter((planet: any) => {
-        const planetValue = Number(planet[activeFilter.column as keyof typeof planet]);
-        let comparisonResult = false;
-        switch (activeFilter.comparison) {
-          case 'maior que':
-            comparisonResult = planetValue > Number(activeFilter.value);
-            break;
-          case 'menor que':
-            comparisonResult = planetValue < Number(activeFilter.value);
-            break;
-          case 'igual a':
-            comparisonResult = planetValue === Number(activeFilter.value);
-            break;
-          default:
-            comparisonResult = true;
-        }
-        return comparisonResult;
+      activeFilters.forEach((activeFilter) => {
+        filteredData = filteredData.filter((planet: any) => {
+          const planetValue = Number(planet[activeFilter.column as keyof typeof planet]);
+          let comparisonResult = false;
+          switch (activeFilter.comparison) {
+            case 'maior que':
+              comparisonResult = planetValue > Number(activeFilter.value);
+              break;
+            case 'menor que':
+              comparisonResult = planetValue < Number(activeFilter.value);
+              break;
+            case 'igual a':
+              comparisonResult = planetValue === Number(activeFilter.value);
+              break;
+            default:
+              comparisonResult = true;
+          }
+          return comparisonResult;
+        });
       });
-    });
 
-    setFilteredPlanets(filteredData);
+      setFilteredPlanets(filteredData);
+    } else {
+      console.error('Planets is not an array');
+    }
   }, [activeFilters, planets, filter, setFilteredPlanets]);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +79,7 @@ function FilterInput() {
       comparison: '',
       value: '',
     });
-    setFilteredPlanets(planets);
+    setFilteredPlanets([]); // Definindo os planetas filtrados como um array vazio
   };
 
   const handleFilter = () => {
@@ -179,7 +183,12 @@ function FilterInput() {
             {' '}
             {activeFilter.value}
           </span>
-          <button onClick={ () => handleRemoveFilter(index) }>Remover</button>
+          <button
+            data-testid="clear-filter-button"
+            onClick={ () => handleRemoveFilter(index) }
+          >
+            Remover
+          </button>
         </div>
       ))}
     </div>
