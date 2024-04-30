@@ -1,11 +1,6 @@
 import React, { ChangeEvent, useContext, useState, useEffect } from 'react';
 import { FilterContext } from '../context/FilterContext';
-
-type FilterType = {
-  column: string;
-  comparison: string;
-  value: string;
-};
+import { FilterType } from '../types';
 
 function FilterInput() {
   const { filter, setFilter, planets, setFilteredPlanets } = useContext(FilterContext);
@@ -15,16 +10,20 @@ function FilterInput() {
     value: '0',
   });
   const [activeFilters, setActiveFilters] = useState<FilterType[]>([]);
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+
+  const columns = ['population',
+    'orbital_period', 'diameter',
+    'rotation_period', 'surface_water'];
 
   useEffect(() => {
-    console.log('filterValues após a atualização:', filterValues);
-  }, [filterValues]);
+    const newSelectedColumns = activeFilters.map((f) => f.column);
+    setSelectedColumns(newSelectedColumns);
+  }, [activeFilters]);
 
   useEffect(() => {
     if (Array.isArray(planets)) {
-      let filteredData = [...planets]; // começa com todos os planetas
-
-      // Adiciona a funcionalidade de filtrar pelo nome
+      let filteredData = [...planets];
       if (filter) {
         filteredData = filteredData.filter((planet: any) => planet.name.includes(filter));
       }
@@ -57,13 +56,11 @@ function FilterInput() {
   }, [activeFilters, planets, filter, setFilteredPlanets]);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log('handleInputChange foi chamada');
     setFilter(event.target.value);
   };
 
   const handleFilterChange = (event:
   ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    console.log('handleFilterChange foi chamada');
     setFilterValues({
       ...filterValues,
       [event.target.name]: event.target.value,
@@ -72,27 +69,22 @@ function FilterInput() {
   };
 
   const handleClearFilter = () => {
-    console.log('handleClearFilter foi chamada');
     setFilter('');
     setFilterValues({
       column: '',
       comparison: '',
       value: '',
     });
-    setFilteredPlanets([]); // Definindo os planetas filtrados como um array vazio
+    setFilteredPlanets([]);
   };
 
   const handleFilter = () => {
-    console.log('handleFilter foi chamada');
-    console.log('Valores do filtro no início da função handleFilter:', filterValues);
-
     if (!filterValues.column) {
-      console.log('Coluna de filtro não definida, pulando a filtragem');
+      console.log('Filtro não aplicado');
       return;
     }
 
     const filteredData = planets.filter((planet: any) => {
-      // Adiciona a funcionalidade de filtrar pelo nome
       if (filterValues.column === 'name') {
         return planet.name.includes(filter);
       }
@@ -121,6 +113,14 @@ function FilterInput() {
     console.log('Dados filtrados no final da função handleFilter:', filteredData);
     setFilteredPlanets(filteredData);
     setActiveFilters([...activeFilters, filterValues]);
+    setSelectedColumns((prevSelectedColumns) => [...prevSelectedColumns,
+      filterValues.column]);
+    setFilterValues((prevFilterValues) => ({
+      column: prevFilterValues.column.includes('population')
+        ? 'orbital_period' : 'population',
+      comparison: 'maior que',
+      value: '0',
+    }));
   };
 
   const handleRemoveFilter = (index: number) => {
@@ -144,11 +144,9 @@ function FilterInput() {
         value={ filterValues.column }
         onChange={ handleFilterChange }
       >
-        <option value="population">population</option>
-        <option value="orbital_period">orbital_period</option>
-        <option value="diameter">diameter</option>
-        <option value="rotation_period">rotation_period</option>
-        <option value="surface_water">surface_water</option>
+        {columns.map((column) => (selectedColumns
+          .includes(column) ? null
+          : <option key={ column } value={ column }>{column}</option>))}
       </select>
       <select
         data-testid="comparison-filter"

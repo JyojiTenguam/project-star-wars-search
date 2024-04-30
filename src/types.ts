@@ -14,3 +14,9 @@ export interface Planet {
   edited: string;
   url: string;
 }
+
+export interface FilterType {
+  column: string;
+  comparison: string;
+  value: string;
+}
