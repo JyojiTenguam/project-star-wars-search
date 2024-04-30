@@ -115,18 +115,26 @@ function FilterInput() {
     setActiveFilters([...activeFilters, filterValues]);
     setSelectedColumns((prevSelectedColumns) => [...prevSelectedColumns,
       filterValues.column]);
-    setFilterValues((prevFilterValues) => ({
-      column: prevFilterValues.column.includes('population')
+    setFilterValues({
+      column: selectedColumns.includes('population')
         ? 'orbital_period' : 'population',
       comparison: 'maior que',
       value: '0',
-    }));
+    });
   };
 
   const handleRemoveFilter = (index: number) => {
     const newActiveFilters = [...activeFilters];
-    newActiveFilters.splice(index, 1);
+    const removeFilter = newActiveFilters.splice(index, 1);
     setActiveFilters(newActiveFilters);
+    setSelectedColumns(selectedColumns.filter((column) => column
+    !== removeFilter[0].column));
+  };
+
+  const handleRemoveAllFilters = () => {
+    setActiveFilters([]);
+    setSelectedColumns([]);
+    setFilteredPlanets([]);
   };
 
   return (
@@ -173,7 +181,7 @@ function FilterInput() {
         Filtrar
       </button>
       {activeFilters.map((activeFilter, index) => (
-        <div key={ index }>
+        <div data-testid="filter" key={ index }>
           <span>
             {activeFilter.column}
             {' '}
@@ -189,6 +197,12 @@ function FilterInput() {
           </button>
         </div>
       ))}
+      <button
+        data-testid="button-remove-filters"
+        onClick={ handleRemoveAllFilters }
+      >
+        Remover todas filtragens
+      </button>
     </div>
   );
 }
