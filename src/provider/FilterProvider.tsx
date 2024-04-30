@@ -11,6 +11,11 @@ export function FilterProvider({ children }: FilterProviderProps) {
   const [filter, setFilter] = useState('');
   const [planets, setPlanets] = useState<Planet[]>([]);
   const [filteredPlanets, setFilteredPlanets] = useState<Planet[]>([]); // Adicione esta linha
+  const [order] = useState({ column: 'name', sort: 'ASC' as 'ASC' | 'DESC' });
+
+  const columns = ['population',
+    'orbital_period', 'diameter',
+    'rotation_period', 'surface_water'];
 
   useEffect(() => {
     (async () => {
@@ -24,11 +29,15 @@ export function FilterProvider({ children }: FilterProviderProps) {
 
   return (
     <FilterContext.Provider
-      value={ { filter,
+      value={ {
+        filter,
         setFilter,
         planets,
         filteredPlanets,
-        setFilteredPlanets } }
+        setFilteredPlanets,
+        order,
+        setPlanets,
+        columns } }
     >
       {' '}
       {children}

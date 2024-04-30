@@ -8,6 +8,12 @@ interface FilterContextData {
   planets: Planet[];
   filteredPlanets: Planet[];
   setFilteredPlanets: React.Dispatch<React.SetStateAction<Planet[]>>;
+  order: {
+    column: string;
+    sort: 'ASC' | 'DESC';
+  };
+  setPlanets: React.Dispatch<React.SetStateAction<Planet[]>>;
+  columns: string[];
 }
 
 export const FilterContext = createContext({} as FilterContextData);

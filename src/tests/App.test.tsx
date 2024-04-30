@@ -13,6 +13,9 @@ describe('FilterInput', () => {
     setFilter: React.Dispatch<React.SetStateAction<string>>;
     setFilteredPlanets: React.Dispatch<React.SetStateAction<Planet[]>>;
     setActiveFilters: () => void;
+    order: string;
+    setPlanets: () => void;
+    columns: string[];
   }
 
   const setActiveFilters = () => {};
@@ -24,7 +27,10 @@ describe('FilterInput', () => {
         setFilteredPlanets: setFilteredPlanets as React.Dispatch<React.SetStateAction<Planet[]>>,
         filter: '',
         planets: [],
-        filteredPlanets: []
+        filteredPlanets: [],
+        order: { column: '', sort: 'ASC' }, // Adicione a propriedade order
+        setPlanets: () => {},
+        columns: []
       }}>
         <FilterInput />
       </FilterContext.Provider>
@@ -54,7 +60,16 @@ describe('FilterInput', () => {
     const setFilteredPlanets: Dispatch<SetStateAction<any[]>> = () => {};
 
     const { getByTestId, queryByTestId } = render(
-      <FilterContext.Provider value={{ filter, setFilter, planets, setFilteredPlanets, filteredPlanets }}>
+      <FilterContext.Provider value={{ 
+        filter, 
+        setFilter, 
+        planets, 
+        setFilteredPlanets, 
+        filteredPlanets,
+        order: { column: '', sort: 'ASC' }, // Adicione a propriedade order
+        setPlanets: () => {},
+        columns: []
+      }}>
         <FilterInput />
       </FilterContext.Provider>
     );
@@ -72,4 +87,3 @@ describe('FilterInput', () => {
     expect(queryByTestId('clear-filter-button')).toBeNull();
   });
 });
-
